@@ -65,18 +65,20 @@ class PDFContentConverter(object):
         if len(res) == 0:
             return None, None
         lines = pd.DataFrame(res)
-        lines.columns = ["text", "page", "x_0", "x_1", "y_0", "y_1",
-                         "original_font",
-                         "font_name", "code", "bold", "italic", "font_size",
-                         "id", "pos_x", "pos_y", "abs_pos",
-                         "masked", "rgb",
+        lines.columns = ["text", "page",
+                         "x_0", "x_1", "y_0", "y_1",
+                         "original_font", "font_name", "code", "bold", "italic", "font_size",
+                         "id",
+                         "pos_x", "pos_y", "abs_pos",
+                         "masked", "frequency_hist",
                          "len_text", "n_tokens",
                          "tag", "box"]
         lines = lines.apply(lambda x: self.create_surrounding_element_features(x, self.rect_boxes, min=3),
                             axis=1)
         lines["is_loop"] = lines.apply(lambda x: 0, axis=1)
 
-        return lines, media_boxes
+        return {"content": lines,
+                "media_boxes": media_boxes}
 
     def get_objects(self, layout_objs, loc, num_pages, media_boxes):
         page_height = media_boxes[num_pages]["y1page"]
