@@ -5,7 +5,7 @@ It retrieves information about textual content, fonts, positions, character freq
 
 ## How-to
 
-* Pass the path of the PDF file which is wanted to be converted to ```PDFContentConverter```
+* Pass the path of the PDF file which is wanted to be converted to ```PDFContentConverter```.
 * Call the function ```convert()```. The PDF content is then returned as a pandas dataframe.
 
 Example call: 
