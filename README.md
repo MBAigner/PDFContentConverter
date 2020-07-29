@@ -15,6 +15,16 @@ Example call:
 
 An example usage is also given in ```Tester.py```.
 
+## Project Structure
+
+* ```PDFContentConverter.py```: contains the ```PDFContentConverter``` class for converting PDF documents.
+* ```util```:
+  * ```constants```: paths to input and output data, pdfminer parameters
+  * ```StorageUtil```: store/load functionalities
+* ```Tester.py```: Python script for testing the ```PDFContentConverter```
+* ```csv```: example csv output files for tests
+* ```pdf```: example pdf input files for tests
+
 ## Output Format
 
 The output containing the converted PDF data is stored as pandas dataframe.
@@ -57,16 +67,6 @@ which can be used to transform the absolute CSV coordinates:
 * ```x1page```: Right x page coordinate
 * ```y0page```: Top y page coordinate
 * ```y1page```: Bottom y page coordinate
-
-## Project Structure
-
-* ```PDFContentConverter.py```: contains the ```PDFContentConverter``` class for converting PDF documents.
-* ```util```:
-  * ```constants```: paths to input and output data, pdfminer parameters
-  * ```StorageUtil```: store/load functionalities
-* ```Tester.py```: Python script for testing the ```PDFContentConverter```
-* ```csv```: example csv output files for tests
-* ```pdf```: example pdf input files for tests
 
 ## Future Work
 
