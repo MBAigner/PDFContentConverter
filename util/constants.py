@@ -1,5 +1,4 @@
 
-STORE_CSV = False
 CSV_PATH = "./csv/"
 PDF_PATH = "./pdf/"
 
