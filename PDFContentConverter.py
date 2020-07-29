@@ -65,17 +65,15 @@ class PDFContentConverter(object):
         if len(res) == 0:
             return None, None
         lines = pd.DataFrame(res)
-        lines.columns = ["text", "page",
+        lines.columns = ["id", "page", "text",
                          "x_0", "x_1", "y_0", "y_1",
-                         "original_font", "font_name", "code", "bold", "italic", "font_size",
-                         "id",
                          "pos_x", "pos_y", "abs_pos",
+                         "original_font", "font_name", "code", "bold", "italic", "font_size",
                          "masked", "frequency_hist",
                          "len_text", "n_tokens",
                          "tag", "box"]
         lines = lines.apply(lambda x: self.create_surrounding_element_features(x, self.rect_boxes, min=3),
                             axis=1)
-        lines["is_loop"] = lines.apply(lambda x: 0, axis=1)
 
         return {"content": lines,
                 "media_boxes": media_boxes}
@@ -111,16 +109,14 @@ class PDFContentConverter(object):
                 if len(text.replace(" ", "")) != 0:  # filter empty text
                     loc.append(
                         [
-                            obj.get_text().replace('\n', ' '),
-                            num_pages,
+                            len(loc), num_pages, obj.get_text().replace('\n', ' '),
                             obj.x0, obj.x1,
                             y0, y1,
+                            pos_x, pos_y,
+                            (pos_x, page_height - pos_y - page_height * num_pages),
                             font_name_original,
                             self.font_name, code, bold, italic,
                             self.font_size,
-                            len(loc),
-                            pos_x, pos_y,
-                            (pos_x, page_height - pos_y - page_height * num_pages),
                             masked_text, rgb,
                             len(text), len(text.split(" ")),
                             tag, self.box_id

@@ -10,5 +10,5 @@ result = converter.convert()
 
 # store results
 csv = constants.CSV_PATH + StorageUtil.replace_file_type(pdf, "csv")
-result["content"].to_csv(csv, sep=";")
+result["content"].to_csv(csv, sep=";", index=0)
 StorageUtil.save_object(result["media_boxes"], constants.CSV_PATH, StorageUtil.cut_file_type(pdf))

@@ -1,6 +1,6 @@
 # PDF Content Converter
 
-The PDF Content Converter is a tool for converting PDF text as well as structural features into a pandas dataframe.
+The PDF Content Converter is a tool for converting PDF text as well as structural features into a pandas dataframe, written natively in Python.
 It retrieves information about textual content, fonts, positions, character frequencies and surrounding visual PDF elements.
 
 ## How-to
@@ -32,8 +32,8 @@ The different PDF elements are stored as rows.
 The dataframe contains the following columns:
 
 * ```id```: unique identifier of the PDF element
-* ```text```: text of the PDF element
 * ```page```: page number, starting with 0
+* ```text```: text of the PDF element
 * ```x_0```: left x coordinate
 * ```x_1```: right x coordinate
 * ```y_0```: top y coordinate
@@ -56,7 +56,7 @@ The dataframe contains the following columns:
 * ```in_element_ids```: contains IDs of surrounding visual elements such as rectangles or lists. They are stored as a list [left, right, top, bottom]. -1 is indicating that there is no adjacent visual element.
 * ```in_element```: indicates based on in_element_ids whether an element is stored in a visual rectangle representation (stored as "rectangle") or not (stored as "none").
 
-Additionally, a dictionary is returned as a Pickle object containing the following entries,
+Additionally, a dictionary is returned  containing the following entries,
 which can be used to transform the absolute CSV coordinates:
 
 * ```x0```: Left x page crop box coordinate
@@ -67,6 +67,8 @@ which can be used to transform the absolute CSV coordinates:
 * ```x1page```: Right x page coordinate
 * ```y0page```: Top y page coordinate
 * ```y1page```: Bottom y page coordinate
+
+Both are returned in a dictionary. The dataframe is stored as "content", the page characteristics as "media_boxes"
 
 ## Future Work
 
