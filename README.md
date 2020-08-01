@@ -6,12 +6,14 @@ It retrieves information about textual content, fonts, positions, character freq
 ## How-to
 
 * Pass the path of the PDF file which is wanted to be converted to ```PDFContentConverter```.
-* Call the function ```convert()```. The PDF content is then returned as a pandas dataframe.
+* Call the function ```pdf2pandas()```. The PDF content is then returned as a pandas dataframe.
+* Media boxes of a PDF can be accessed using ```get_media_boxes()```, the page count over ```get_page_count()```
+* Using the ```convert()``` function, the pandas dataframe, media boxes and page count are returned as a dictionary.
 
 Example call: 
 
     converter = PDFContentConverter(pdf)
-    result = converter.convert()
+    result = converter.pdf2pandas()
 
 An example usage is also given in ```Tester.py```.
 
