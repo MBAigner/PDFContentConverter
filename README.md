@@ -15,7 +15,7 @@ Example call:
     converter = PDFContentConverter(pdf)
     result = converter.pdf2pandas()
 
-An example usage is also given in ```Tester.py```.
+A more detailed example usage is also given in ```Tester.py```.
 
 ## Project Structure
 
