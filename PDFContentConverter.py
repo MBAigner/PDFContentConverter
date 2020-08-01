@@ -27,9 +27,8 @@ class PDFContentConverter(object):
 
     def parse_document(self):
         self.res = []  # result set
-        n = 0  # page count
         self.media_boxes = dict()  # media coordinate dictionary
-        self.n = 0
+        self.n = 0  # page count
         pdf = open(self.pdf, "rb")
         pdf_parser = PDFParser(pdf)
         pdf_document = PDFDocument(pdf_parser)
