@@ -70,7 +70,8 @@ which can be used to transform the absolute CSV coordinates:
 * ```y0page```: Top y page coordinate
 * ```y1page```: Bottom y page coordinate
 
-Both are returned in a dictionary. The dataframe is stored as "content", the page characteristics as "media_boxes"
+Both are returned in a dictionary when using ```convert()```. 
+The dataframe is stored as "content", the page characteristics as "media_boxes" and the number of pages as "page_count".
 
 ## Future Work
 
