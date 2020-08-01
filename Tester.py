@@ -2,13 +2,18 @@ from PDFContentConverter import PDFContentConverter
 from util import constants
 from util import StorageUtil
 
-# convert PDF
+# test file
 pdf = "eu-001.pdf"
 file = constants.PDF_PATH + pdf
+
+# convert PDF
 converter = PDFContentConverter(file)
-result = converter.convert()
+result = converter.convert()  # dictionary containing text and media boxes
+df = converter.pdf2pandas()  # equivalent to result["content"]
+media_boxes = converter.get_media_boxes()  # equivalent to result["content"]
+n_pages = converter.get_page_count()
 
 # store results
-csv = constants.CSV_PATH + StorageUtil.replace_file_type(pdf, "csv")
-result["content"].to_csv(csv, sep=";", index=0)
+csv_file = constants.CSV_PATH + StorageUtil.replace_file_type(pdf, "csv")
+df.to_csv(csv_file, sep=";", index=0)
 StorageUtil.save_object(result["media_boxes"], constants.CSV_PATH, StorageUtil.cut_file_type(pdf))

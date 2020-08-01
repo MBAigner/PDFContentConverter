@@ -21,12 +21,15 @@ class PDFContentConverter(object):
         self.rect_boxes = []
         self.plot_boxes = []
         self.res = None
+        self.pandas = None
         self.media_boxes = None
+        self.n = None
 
     def parse_document(self):
         self.res = []  # result set
         n = 0  # page count
         self.media_boxes = dict()  # media coordinate dictionary
+        self.n = 0
         pdf = open(self.pdf, "rb")
         pdf_parser = PDFParser(pdf)
         pdf_document = PDFDocument(pdf_parser)
@@ -52,13 +55,13 @@ class PDFContentConverter(object):
                 layout = page_aggregator.get_result()
                 crop_box = page.cropbox
                 page_box = page.mediabox
-                self.media_boxes[n] = {"x0": crop_box[0], "y0": crop_box[1],
-                                       "x1": crop_box[2], "y1": crop_box[3],
-                                       "x0page": page_box[0], "y0page": page_box[1],
-                                       "x1page": page_box[2], "y1page": page_box[3]}
+                self.media_boxes[self.n] = {"x0": crop_box[0], "y0": crop_box[1],
+                                            "x1": crop_box[2], "y1": crop_box[3],
+                                            "x0page": page_box[0], "y0page": page_box[1],
+                                            "x1page": page_box[2], "y1page": page_box[3]}
                 self.box_id = -1
-                res = self.get_objects(layout._objs, self.res, n, self.media_boxes)
-                n += 1
+                self.res = self.get_objects(layout._objs, self.res, self.n, self.media_boxes)
+                self.n += 1
 
             return self.res, self.media_boxes
 
@@ -66,18 +69,18 @@ class PDFContentConverter(object):
         res, media_boxes = self.parse_document()
         if len(res) == 0:
             return None, None
-        lines = pd.DataFrame(res)
-        lines.columns = ["id", "page", "text",
-                         "x_0", "x_1", "y_0", "y_1",
-                         "pos_x", "pos_y", "abs_pos",
-                         "original_font", "font_name", "code", "bold", "italic", "font_size",
-                         "masked", "frequency_hist",
-                         "len_text", "n_tokens",
-                         "tag", "box"]
-        lines = lines.apply(lambda x: self.create_surrounding_element_features(x, self.rect_boxes, min=3),
-                            axis=1)
+        self.pandas = pd.DataFrame(res)
+        self.pandas.columns = ["id", "page", "text",
+                               "x_0", "x_1", "y_0", "y_1",
+                               "pos_x", "pos_y", "abs_pos",
+                               "original_font", "font_name", "code", "bold", "italic", "font_size",
+                               "masked", "frequency_hist",
+                               "len_text", "n_tokens",
+                               "tag", "box"]
+        self.pandas = self.pandas.apply(lambda x: self.create_surrounding_element_features(x, self.rect_boxes, min=3),
+                                        axis=1)
 
-        return {"content": lines,
+        return {"content": self.pandas,
                 "media_boxes": media_boxes}
 
     def get_objects(self, layout_objs, res, n, media_boxes):
@@ -115,7 +118,7 @@ class PDFContentConverter(object):
                             obj.x0, obj.x1,
                             y0, y1,
                             pos_x, pos_y,
-                            (pos_x, page_height - pos_y - page_height * num_pages),
+                            (pos_x, page_height - pos_y - page_height * n),
                             font_name_original,
                             self.font_name, code, bold, italic,
                             self.font_size,
@@ -256,3 +259,14 @@ class PDFContentConverter(object):
 
         ids = [left_id, right_id, top_id, bottom_id]
         return ids
+
+    def pdf2pandas(self):
+        if self.pandas is None:
+            self.convert()
+        return self.pandas
+
+    def get_media_boxes(self):
+        return self.media_boxes
+
+    def get_page_count(self):
+        return self.n
