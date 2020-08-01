@@ -78,5 +78,5 @@ Both are returned in a dictionary. The dataframe is stored as "content", the pag
 
 ## Acknowledgements
 
-* This work is built on top of the pdfminer project https://github.com/pdfminer/pdfminer.six.
+* This work is built on top of the pdfminer project https://github.com/euske/pdfminer.
 * Example PDFs are obtained from the ICDAR Table Recognition Challenge 2013 https://roundtrippdf.com/en/data-extraction/pdf-table-recognition-dataset/.
