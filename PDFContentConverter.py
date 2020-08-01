@@ -20,12 +20,16 @@ class PDFContentConverter(object):
         self.box_id = -1
         self.rect_boxes = []
         self.plot_boxes = []
+        self.res = None
+        self.media_boxes = None
 
-    def process_pages(self, pdf):
-        result = ''
-        num_pages = 0
-        parser = PDFParser(pdf)
-        document = PDFDocument(parser)
+    def parse_document(self):
+        self.res = []  # result set
+        n = 0  # page count
+        self.media_boxes = dict()  # media coordinate dictionary
+        pdf = open(self.pdf, "rb")
+        pdf_parser = PDFParser(pdf)
+        pdf_document = PDFDocument(pdf_parser)
         la_params = LAParams(detect_vertical=True)
         if constants.USE_CUSTOM_PDF_PARAMETERS:
             la_params = LAParams(detect_vertical=constants.DEFAULT_DETECT_VERTICAL,
@@ -35,33 +39,31 @@ class PDFContentConverter(object):
                                  char_margin=constants.DEFAULT_CHAR_MARGIN,
                                  boxes_flow=constants.DEFAULT_BOXES_FLOW)
 
-        if document.is_extractable:
-            manager = PDFResourceManager()
-            device = PDFPageAggregator(manager,
-                                       laparams=la_params)
-            interpreter = PDFPageInterpreter(manager, device)
-            pages = PDFPage.create_pages(document)
+        if pdf_document.is_extractable:
+            resource_manager = PDFResourceManager()
+            page_aggregator = PDFPageAggregator(resource_manager,
+                                                laparams=la_params)
+            page_interpreter = PDFPageInterpreter(resource_manager,
+                                                  page_aggregator)
+            pages = PDFPage.create_pages(pdf_document)
 
-            loc = []
-            media_boxes = dict()
             for page in pages:
-                interpreter.process_page(page)
-                layout = device.get_result()
+                page_interpreter.process_page(page)
+                layout = page_aggregator.get_result()
                 crop_box = page.cropbox
                 page_box = page.mediabox
-                media_boxes[num_pages] = {"x0": crop_box[0], "y0": crop_box[1],
-                                          "x1": crop_box[2], "y1": crop_box[3],
-                                          "x0page": page_box[0], "y0page": page_box[1],
-                                          "x1page": page_box[2], "y1page": page_box[3]}
+                self.media_boxes[n] = {"x0": crop_box[0], "y0": crop_box[1],
+                                       "x1": crop_box[2], "y1": crop_box[3],
+                                       "x0page": page_box[0], "y0page": page_box[1],
+                                       "x1page": page_box[2], "y1page": page_box[3]}
                 self.box_id = -1
-                result = self.get_objects(layout._objs, loc, num_pages, media_boxes)
-                num_pages += 1
+                res = self.get_objects(layout._objs, self.res, n, self.media_boxes)
+                n += 1
 
-            return result, media_boxes
+            return self.res, self.media_boxes
 
     def convert(self):
-        pdf = open(self.pdf, "rb")
-        res, media_boxes = self.process_pages(pdf)
+        res, media_boxes = self.parse_document()
         if len(res) == 0:
             return None, None
         lines = pd.DataFrame(res)
@@ -78,8 +80,8 @@ class PDFContentConverter(object):
         return {"content": lines,
                 "media_boxes": media_boxes}
 
-    def get_objects(self, layout_objs, loc, num_pages, media_boxes):
-        page_height = media_boxes[num_pages]["y1page"]
+    def get_objects(self, layout_objs, res, n, media_boxes):
+        page_height = media_boxes[n]["y1page"]
         for obj in layout_objs:
             if isinstance(obj, LTTextLine):
                 y1 = page_height - obj.y1
@@ -107,9 +109,9 @@ class PDFContentConverter(object):
                     replace("Bold", "").replace("Italic", "").replace(",", "")
 
                 if len(text.replace(" ", "")) != 0:  # filter empty text
-                    loc.append(
+                    res.append(
                         [
-                            len(loc), num_pages, obj.get_text().replace('\n', ' '),
+                            len(res), n, obj.get_text().replace('\n', ' '),
                             obj.x0, obj.x1,
                             y0, y1,
                             pos_x, pos_y,
@@ -124,7 +126,7 @@ class PDFContentConverter(object):
                     )
             elif isinstance(obj, LTTextBox):
                 self.box_id = self.box_id + 1
-                self.get_objects(obj._objs, loc, num_pages, media_boxes)
+                self.get_objects(obj._objs, res, n, media_boxes)
             else:
                 type = ""
                 if isinstance(obj, LTRect) or isinstance(obj, LTCurve) or isinstance(obj, LTLine):
@@ -133,9 +135,9 @@ class PDFContentConverter(object):
                     type = "figure"
                 elif isinstance(obj, LTImage):
                     type = "image"
-                self.add_visual_elements(type, num_pages, obj, page_height)
+                self.add_visual_elements(type, n, obj, page_height)
 
-        return loc
+        return res
 
     def clean_text(self, text):
         text = text.replace("\\x0", " ").replace('\n', ' ').replace('\r', ' ')
