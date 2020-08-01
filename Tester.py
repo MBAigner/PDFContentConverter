@@ -10,8 +10,8 @@ file = constants.PDF_PATH + pdf
 converter = PDFContentConverter(file)
 result = converter.convert()  # dictionary containing text and media boxes
 df = converter.pdf2pandas()  # equivalent to result["content"]
-media_boxes = converter.get_media_boxes()  # equivalent to result["content"]
-n_pages = converter.get_page_count()
+media_boxes = converter.get_media_boxes()  # equivalent to result["media_boxes"]
+n_pages = converter.get_page_count()  # equivalent to result["page_count"]
 
 # store results
 csv_file = constants.CSV_PATH + StorageUtil.replace_file_type(pdf, "csv")

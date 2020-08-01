@@ -66,10 +66,10 @@ class PDFContentConverter(object):
             return self.res, self.media_boxes
 
     def convert(self):
-        res, media_boxes = self.parse_document()
-        if len(res) == 0:
+        self.res, self.media_boxes = self.parse_document()
+        if len(self.res) == 0:
             return None, None
-        self.pandas = pd.DataFrame(res)
+        self.pandas = pd.DataFrame(self.res)
         self.pandas.columns = ["id", "page", "text",
                                "x_0", "x_1", "y_0", "y_1",
                                "pos_x", "pos_y", "abs_pos",
@@ -81,7 +81,8 @@ class PDFContentConverter(object):
                                         axis=1)
 
         return {"content": self.pandas,
-                "media_boxes": media_boxes}
+                "media_boxes": self.media_boxes,
+                "page_count": self.n}
 
     def get_objects(self, layout_objs, res, n, media_boxes):
         page_height = media_boxes[n]["y1page"]
