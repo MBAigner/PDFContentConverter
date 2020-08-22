@@ -26,6 +26,10 @@ class PDFContentConverter(object):
         self.n = None
 
     def parse_document(self):
+        """
+
+        :return:
+        """
         self.res = []  # result set
         self.media_boxes = dict()  # media coordinate dictionary
         self.n = 0  # page count
@@ -65,6 +69,10 @@ class PDFContentConverter(object):
             return self.res, self.media_boxes
 
     def convert(self):
+        """
+
+        :return:
+        """
         self.res, self.media_boxes = self.parse_document()
         if len(self.res) == 0:
             return None, None
@@ -84,6 +92,14 @@ class PDFContentConverter(object):
                 "page_count": self.n}
 
     def get_objects(self, layout_objs, res, n, media_boxes):
+        """
+
+        :param layout_objs:
+        :param res:
+        :param n:
+        :param media_boxes:
+        :return:
+        """
         page_height = media_boxes[n]["y1page"]
         for obj in layout_objs:
             if isinstance(obj, LTTextLine):
@@ -143,12 +159,22 @@ class PDFContentConverter(object):
         return res
 
     def clean_text(self, text):
+        """
+
+        :param text:
+        :return:
+        """
         text = text.replace("\\x0", " ").replace('\n', ' ').replace('\r', ' ')
         text = re.sub(" +", " ", text)
         text = text.strip()
         return text
 
     def get_tag(self, text):
+        """
+
+        :param text:
+        :return:
+        """
         if len(text) > 0 and text[-1] == ":":
             tag = "key"
         else:
@@ -156,11 +182,21 @@ class PDFContentConverter(object):
         return tag
 
     def mask_text(self, text):
+        """
+
+        :param text:
+        :return:
+        """
         text = re.sub("\d+", "#", text)
         text = text.lower()
         return text
 
     def get_rgb(self, text):
+        """
+
+        :param text:
+        :return:
+        """
         len_all = len(text)
         len_text = len(re.findall("[A-Za-zÄÖÜäöü]", text))
         len_digits = len(re.findall("[0-9]", text))
@@ -175,6 +211,14 @@ class PDFContentConverter(object):
             return (0, 0, 0, 0)
 
     def add_visual_elements(self, type, num_pages, obj, page_height):
+        """
+
+        :param type:
+        :param num_pages:
+        :param obj:
+        :param page_height:
+        :return:
+        """
         if type == "line":
             # add single line
             self.rect_boxes.append([type, num_pages, round(obj.x0), round(obj.x1),
@@ -204,12 +248,25 @@ class PDFContentConverter(object):
                                     obj.x0, obj.x1, page_height - obj.y1, page_height - obj.y0])
 
     def create_surrounding_element_features(self, location, elements, min):
+        """
+
+        :param location:
+        :param elements:
+        :param min:
+        :return:
+        """
         lines = self.get_surrounding_lines(location, elements)
         location["in_element_ids"] = lines
         location["in_element"] = "rectangle" if lines.count(-1) <= 4-min else "none"
         return location
 
     def get_surrounding_rectangles(self, location, elements):
+        """
+
+        :param location:
+        :param elements:
+        :return:
+        """
         rectangles = list(filter(lambda x: x[0] == "rectangle" and x[1] == location["page"],
                                  elements))
         rect_ids = []
@@ -220,6 +277,12 @@ class PDFContentConverter(object):
         return rect_ids if rect_ids != [] else None
 
     def get_surrounding_lines(self, location, elements):
+        """
+
+        :param location:
+        :param elements:
+        :return:
+        """
         lines = list(filter(lambda x: x[0] == "line" and x[1] == location["page"],
                             elements))
         left_dist = np.inf
@@ -261,16 +324,28 @@ class PDFContentConverter(object):
         return ids
 
     def pdf2pandas(self):
+        """
+
+        :return:
+        """
         if self.pandas is None:
             self.convert()
         return self.pandas
 
     def get_media_boxes(self):
+        """
+
+        :return:
+        """
         if self.media_boxes is None:
             self.convert()
         return self.media_boxes
 
     def get_page_count(self):
+        """
+
+        :return:
+        """
         if self.n is None:
             self.convert()
         return self.n
