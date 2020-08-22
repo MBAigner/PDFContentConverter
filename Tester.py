@@ -3,7 +3,7 @@ from util import constants
 from util import StorageUtil
 
 # test file
-pdf = "ss.pdf"
+pdf = "eu-001.pdf"
 file = constants.PDF_PATH + pdf
 
 # convert PDF
