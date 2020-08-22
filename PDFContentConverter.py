@@ -266,7 +266,11 @@ class PDFContentConverter(object):
         return self.pandas
 
     def get_media_boxes(self):
+        if self.media_boxes is None:
+            self.convert()
         return self.media_boxes
 
     def get_page_count(self):
+        if self.n is None:
+            self.convert()
         return self.n
