@@ -7,8 +7,8 @@ It retrieves information about textual content, fonts, positions, character freq
 
 * Pass the path of the PDF file which is wanted to be converted to ```PDFContentConverter```.
 * Call the function ```pdf2pandas()```. The PDF content is then returned as a pandas dataframe.
-* Media boxes of a PDF can be accessed using ```get_media_boxes()```, the page count over ```get_page_count()```
-* Using the ```convert()``` function, the pandas dataframe, media boxes and page count are returned as a dictionary.
+* Media boxes of a PDF can be accessed using ```get_media_boxes()```, the page count over ```get_page_count()``` and the document text using ```pdf2text()```.
+* Using the ```convert()``` function, the pandas dataframe, textual document content, media boxes and page count are returned as a dictionary.
 
 Example call: 
 
@@ -71,13 +71,14 @@ which can be used to transform the absolute CSV coordinates:
 * ```y1page```: Bottom y page coordinate
 
 Both are returned in a dictionary when using ```convert()```. 
-The dataframe is stored as "content", the page characteristics as "media_boxes" and the number of pages as "page_count".
-
-## Future Work
-
-* We plan to adapt the ```PDFContentConverter``` for an additional direct parsing of PDF content into plain text using the pdfminer functionality.
+The dataframe is stored as "content", the page characteristics as "media_boxes", the textual content as "text" and the number of pages as "page_count".
 
 ## Acknowledgements
 
 * This work is built on top of the pdfminer project https://github.com/euske/pdfminer.
 * Example PDFs are obtained from the ICDAR Table Recognition Challenge 2013 https://roundtrippdf.com/en/data-extraction/pdf-table-recognition-dataset/.
+
+## Authors
+
+* Michael Benedikt Aigner
+* Florian Preis
