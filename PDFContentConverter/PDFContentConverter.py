@@ -8,7 +8,7 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PDFParser
 import re
 import numpy as np
-from util import constants
+from PDFContentConverter.util import constants
 
 
 class PDFContentConverter(object):
