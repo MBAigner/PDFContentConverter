@@ -1,6 +1,6 @@
 from PDFContentConverter import PDFContentConverter
-from util import constants
-from util import StorageUtil
+from PDFContentConverter.util import constants
+from PDFContentConverter.util import StorageUtil
 
 # test file
 pdf = "eu-001.pdf"
