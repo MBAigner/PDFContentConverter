@@ -1,12 +1,15 @@
 from distutils.core import setup
 
+with open('README.rst') as f:
+    long_description = f.read()
+print(long_description)
 setup(
   name='PDFContentConverter',
   packages=['PDFContentConverter', 'PDFContentConverter.util'],
-  version='0.4',
+  version='0.7',
   license='MIT',
   description='A tool for converting PDF text as well as structural features into a pandas dataframe. ',
-  long_description_content_type='text/markdown',
+  long_description=long_description,
   author='Michael Aigner, Florian Preis',
   # author_email='your.email@domain.com',
   url='https://github.com/MBAigner/PDFContentConverter',
