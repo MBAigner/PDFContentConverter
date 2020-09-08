@@ -22,6 +22,7 @@ class PDFContentConverter(object):
         self.plot_boxes = []
         self.res = None
         self.pandas = None
+        self.text = None
         self.media_boxes = None
         self.n = None
 
@@ -86,8 +87,9 @@ class PDFContentConverter(object):
                                "tag", "box"]
         self.pandas = self.pandas.apply(lambda x: self.create_surrounding_element_features(x, self.rect_boxes, min=3),
                                         axis=1)
-
+        self.text = self.pandas.sort_values(by=["page", "y_0", "x_0"])["text"].str.cat(sep="\n")
         return {"content": self.pandas,
+                "text": self.text,
                 "media_boxes": self.media_boxes,
                 "page_count": self.n}
 
@@ -331,6 +333,15 @@ class PDFContentConverter(object):
         if self.pandas is None:
             self.convert()
         return self.pandas
+
+    def pdf2text(self):
+        """
+
+        :return:
+        """
+        if self.text is None:
+            self.convert()
+        return self.text
 
     def get_media_boxes(self):
         """
